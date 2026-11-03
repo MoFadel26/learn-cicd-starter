@@ -13,7 +13,7 @@ func (cfg *apiConfig) handlerNotesGet(w http.ResponseWriter, r *http.Request, us
 	posts, err := cfg.DB.GetNotesForUser(r.Context(), user.ID)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't get posts for user", err)
-		return
+		return idk
 	}
 
 	postsResp, err := databasePostsToPosts(posts)
