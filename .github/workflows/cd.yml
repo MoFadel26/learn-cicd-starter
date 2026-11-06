@@ -4,6 +4,10 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   deploy:
     name: Deploy
@@ -19,3 +23,17 @@ jobs:
 
       - name: Build the App
         run: ./scripts/buildprod.sh
+
+      - name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: "projects/116526589622/locations/global/workloadIdentityPools/github/providers/my-repo"
+          service_account: "cloud-run-deployer@notely-513813.iam.gserviceaccount.com"
+
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@v3
+
+      - name: Build and push Docker image
+        run: |
+          gcloud builds submit \
+            --tag us-central1-docker.pkg.dev/PROJECT_ID/notely-ar-repo/notely:latest .
